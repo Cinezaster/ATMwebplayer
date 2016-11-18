@@ -17,7 +17,7 @@
       // Note to self: Addresses could (should?) be derived from RETs (at expense of RAM)
       
       // Synthesizer topology
-      /*var music = [  // A) Sample music =>
+      var music = [  // A) Sample music =>
         //                            // setup bytes 21
         0x08,                         // Number of tracks
         0x00, 0,                      // Address of track 0
@@ -76,7 +76,7 @@
         0x9F + 43,                    // DELAY: 43 ticks
         0xFE,                         // RETURN
 
-        "Track 6",                    // ticks = 64, bytes = 10
+        "track 6",                    // ticks = 64, bytes = 10
         0x00 + 13,                    // NOTE ON: note = 23 (delay 1 tick)
         0x40, 32,                     // FX: SET VOLUME: volume = 32
         0x4E, 1, 0x00 + 0x00 + 30,    // SET TREMOLO OR VIBRATO: depth = 16 / retrig = OFF / TorV = TREMOLO / rate = 3
@@ -85,7 +85,7 @@
         0x9F + 1,                     // DELAY: 1 ticks
         0xFE,                         // RETURN
 
-        "Track 7",                    // ticks = 64, bytes = 20
+        "track 7",                    // ticks = 64, bytes = 20
         0x40, 32,                     // FX: SET VOLUME: volume = 32
         0x9F + 1,                     // DELAY: ticks = 1
         0x40,  0,                     // FX: SET VOLUME: volume = 0
@@ -103,44 +103,7 @@
         0x9F + 16,                    // DELAY: ticks = 16
         0xFE,                         // RETURN
 
-      ];*/
-
-      function setup(body){
-        // drag and drop
-        body.ondragover = function() {
-            return false;
-        };
-        body.ondragend = function() {
-            return false;
-        };
-        body.ondrop = function(e) {
-            e.preventDefault();
-            var file = e.dataTransfer.files[0],
-                reader = new FileReader();
-            reader.onload = function(event) {
-                var music = event.target.result;
-                music = music.replace(/\/\/"Track/g, '"Track');
-                music = music.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$|([^:]|^)\#.*$|([^:]|^)Song.*$|([^:]|^)}.*$/gm, '');
-                music = music.replace(/[\s]/g, '');
-                music = music.replace(/Track/g, 'Track ');
-                music = music.slice(0, -1).split(',');
-                for(var i = 0; i < music.length; i++){
-                    if(music[i][0] !== '"'){ // skip Track strings
-                        // parse to int and calculate if necessary
-                        if(music[i].indexOf('+') !== -1){
-                            music[i] = parseInt(music[i].split('+')[0])+parseInt(music[i].split('+')[1]);
-                        }
-                        else{
-                            music[i] = parseInt(music[i]);
-                        }
-                    }
-                }
-                play(music);
-            };
-            reader.readAsText(file);
-            return false;
-        };
-      }
+      ];
 
       var player;    // B) Reads music data, controls synthesizer =>
       var synth;     // C) Oscillators generate samples, sends them to converter =>
@@ -148,7 +111,7 @@
       var output;    // E) Plays sample stream, acts as a sink, is thus the source of all system timing.
 
       // Let's get this show on the road!
-      function play(music) {
+      function setup() {
         // Initialize synthesizer
         synth = new SquawkSynth();
         // Initialize audio output
@@ -186,9 +149,10 @@
       function refreshStats() {
         count.innerHTML = player.getTickCount().toString();
       }
+
     </script>
   </head>
-  <body onload="setup(this);" style="font-family: Courier New; text-align: center;">
+  <body onload="setup();" style="font-family: Courier New; text-align: center;">
     <h1>HEWNIQUORN TEKKNO MUZAK!</h1>
     <h3>- DEVELOPMENT ZONE FOR SQUAWK 2.0: ATMlib -</h3>
     <!-- <img src="https://media.giphy.com/media/112iRUPbOe9DEs/giphy.gif" align="absmiddle"><br><br> -->
