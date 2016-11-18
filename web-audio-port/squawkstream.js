@@ -173,7 +173,7 @@ function SquawkStream(sampleRate) {
         if (freqCount++ >= (freqConfig & 0x7F)) freqCount = 0;
       }
 
-      // Apply Arpeggio
+      // Apply Arpeggio -> WORKING HURRAY :)
       if ((arpNotes != 0)  && (note != 0)) {
         if ((arpCount & 0x1F) < (arpTiming & 0x1F)) arpCount++;
         else {
@@ -187,7 +187,7 @@ function SquawkStream(sampleRate) {
         }
       }
 
-      // Apply Tremolo or Vibrato
+      // Apply Tremolo or Vibrato -> WORKING HURRAY :)
       if (treviDepth != 0) {
         //Tremolo (0) or Vibrato (1) ?
         if ((treviConfig & 0x40) == 0) {
@@ -196,7 +196,7 @@ function SquawkStream(sampleRate) {
           else v -= (treviDepth & 0x1F);
           if (v < 0) v = 0;
           else if (v > 63) v = 63;
-          vol = v;
+          synth.setVolume(id, v);
         }
         else {
           var f = synth.readFrequency(id);
@@ -271,6 +271,7 @@ function SquawkStream(sampleRate) {
                 break;
               case 11: // ADD Transposition
                 tranConfig += readByte();
+                tranConfig = tranConfig > 127 ? tranConfig - 256 : tranConfig;
                 break;
               case 12: // SET Transposition
                 tranConfig = readByte();
