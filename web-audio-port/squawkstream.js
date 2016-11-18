@@ -234,9 +234,11 @@ function SquawkStream(sampleRate) {
                 break;
               case 1: // Slide volume ON
                 volSlide = readByte();
+                volSlide = volSlide > 127 ? volSlide - 256 : volSlide;
                 break;
               case 2: // Slide volume ON advanced
                 volSlide = readByte();
+                volSlide = volSlide > 127 ? volSlide - 256 : volSlide;
                 volConfig = readByte();
                 break;
               case 3: // Slide volume OFF (same as 0x01 0x00)
@@ -244,9 +246,11 @@ function SquawkStream(sampleRate) {
                 break;
               case 4: // Slide frequency ON
                 freqSlide = readByte();
+                freqSlide = freqSlide > 127 ? freqSlide - 256 : freqSlide;
                 break;
               case 5: // Slide frequency ON advanced
                 freqSlide = readByte();
+                freqSlide = freqSlide > 127 ? freqSlide - 256 : freqSlide;
                 freqConfig = readByte();
                 break;
               case 6: // Slide frequency OFF
