@@ -233,10 +233,12 @@ function SquawkStream(sampleRate) {
                 synth.setVolume(id, readByte());
                 break;
               case 1: // Slide volume ON
-                volSlide = readByte() > 127 ? readByte() - 256 : readByte();
+                volSlide = readByte();// > 127 ? readByte() - 256 : readByte();
+                volSlide = volSlide > 127 ? volSlide - 256 : volSlide;
                 break;
               case 2: // Slide volume ON advanced
-                volSlide = readByte() > 127 ? readByte() - 256 : readByte();
+                volSlide = readByte();// > 127 ? readByte() - 256 : readByte();
+                volSlide = volSlide > 127 ? volSlide - 256 : volSlide;
                 volConfig = readByte();
                 break;
               case 3: // Slide volume OFF (same as 0x01 0x00)
