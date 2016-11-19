@@ -173,15 +173,19 @@ function SquawkStream(sampleRate) {
         if (freqCount++ >= (freqConfig & 0x7F)) freqCount = 0;
       }
 
-      // Apply Arpeggio -> WORKING HURRAY :)
+      // Apply Arpeggio or Note Cut -> WORKING HURRAY :)
       if ((arpNotes != 0)  && (note != 0)) {
         if ((arpCount & 0x1F) < (arpTiming & 0x1F)) arpCount++;
         else {
           if ((arpCount & 0xE0) == 0) arpCount = 32;
-          else if (((arpCount & 0xE0) == 32) && ((arpTiming & 0x40) == 0)) arpCount = 64;
+          else if (((arpCount & 0xE0) == 32) && ((arpTiming & 0x40) == 0) && (arpNotes != 0xFF)) arpCount = 64;
           else arpCount = 0;
           var arpNote = note;
-          if ((arpCount & 0xE0) != 0) arpNote += (arpNotes >> 4);
+          if ((arpCount & 0xE0) != 0)
+            {
+              if (arpNotes == 0xFF) arpNote = 0;
+              else arpNote += (arpNotes >> 4);
+            }
           if ((arpCount & 0xE0) == 64) arpNote += (arpNotes & 15);
           synth.setFrequency(id, noteTable[arpNote + tranConfig]);
         }
@@ -291,6 +295,13 @@ function SquawkStream(sampleRate) {
                 break;
               case 17: // glissando OFF
                 glisConfig = 0;
+                break;
+              case 18: // Note Cut
+                arpNotes = readByte();    // 0xFF use Note Cut
+                arpTiming = readByte();   // tick amount
+                break;
+              case 19: // Note Cut OFF
+                arpNotes = 0;
                 break;
             }
           } else if(cmd < 224) {
