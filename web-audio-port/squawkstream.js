@@ -80,7 +80,7 @@ function SquawkStream(sampleRate) {
     var reCount     = 0;
 
     // transposition
-    var tranConfig  = 0;
+    var transConfig  = 0;
 
     //Tremolo or Vibrato
     var treviDepth  = 0;
@@ -187,7 +187,7 @@ function SquawkStream(sampleRate) {
               else arpNote += (arpNotes >> 4);
             }
           if ((arpCount & 0xE0) == 64) arpNote += (arpNotes & 15);
-          synth.setFrequency(id, noteTable[arpNote + tranConfig]);
+          synth.setFrequency(id, noteTable[arpNote + transConfig]);
         }
       }
 
@@ -225,7 +225,7 @@ function SquawkStream(sampleRate) {
           var cmd = readByte();
           if(cmd < 64) {
             // 0 … 63 : NOTE ON/OFF
-            if ((note = cmd) != 0) note += tranConfig;
+            if ((note = cmd) != 0) note += transConfig;
             synth.setFrequency(id, noteTable[note]);
             if ((arpTiming & 0x20) != 0) arpCount = 0; // ARP retriggering
             delay = 1;
@@ -274,33 +274,43 @@ function SquawkStream(sampleRate) {
                 reConfig = 0;
                 break;
               case 11: // ADD Transposition
-                tranConfig += readByte();
-                tranConfig = tranConfig > 127 ? tranConfig - 256 : tranConfig;
+                transConfig += readByte();
+                transConfig = transConfig > 127 ? transConfig - 256 : transConfig;
                 break;
               case 12: // SET Transposition
-                tranConfig = readByte();
+                transConfig = readByte();
                 break;
               case 13: // Transposition OFF
-                tranConfig = 0;
+                transConfig = 0;
                 break;
-              case 14: // SET Tremolo or Vibrato
+
+              case 14: // SET Tremolo
                 treviDepth = readByte();
                 treviConfig = readByte();
                 break;
-              case 15: // Tremolo or Vibrato  OFF
+              case 15: // Tremolo   OFF
                 treviDepth = 0;
                 break;
-              case 16: // Glissando
+
+              case 16: // SET Vibrato
+                treviDepth = readByte();
+                treviConfig = readByte() + 0x40;
+                break;
+              case 17: // Vibrato  OFF
+                treviDepth = 0;
+                break;
+
+              case 18: // Glissando
                 glisConfig = readByte();
                 break;
-              case 17: // glissando OFF
+              case 19: // glissando OFF
                 glisConfig = 0;
                 break;
-              case 18: // Note Cut
-                arpNotes = readByte();    // 0xFF use Note Cut
+              case 20: // Note Cut
+                arpNotes = 0xFF;    // 0xFF use Note Cut
                 arpTiming = readByte();   // tick amount
                 break;
-              case 19: // Note Cut OFF
+              case 21: // Note Cut OFF
                 arpNotes = 0;
                 break;
             }
