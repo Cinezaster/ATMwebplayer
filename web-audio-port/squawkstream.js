@@ -64,17 +64,7 @@ function SquawkStream(sampleRate) {
     var volfreSlide  = 0;
     var volfreConfig = 0;
     var volfreCount  = 0;
-/*
-    // Volume fx
-    var volSlide     = 0;
-    var volConfig    = 0;
-    var volCount     = 0;
 
-    // Frequency FX
-    var freqSlide   = 0;
-    var freqConfig  = 0;
-    var freqCount   = 0;
-*/
     // Arpeggio FX
     var arpNotes    = 0;     // notes: base, base+[7:4], base+[7:4]+[3:0]
     var arpTiming   = 0;     // [7] = reserved, [6] = not third note ,[5] = retrigger, [4:0] = tick count
@@ -173,36 +163,6 @@ function SquawkStream(sampleRate) {
         if (volfreCount++ >= (volfreConfig & 0x3F)) volfreCount = 0;
       }
 
-/*
-      // Apply volume slides -> WORKING HURRAY :)
-      if (volfreSlide != 0) {
-        if (volfreCount == 0) {
-          var v = synth.readVolume(id);
-          v += volfreSlide;
-          if ((volfreConfig & 0x80) != 0) {
-            if (v < 0) v = 0;
-            else if (v > 63) v = 63;
-          }
-          synth.setVolume(id, v);
-        }
-        if (volfreCount++ >= (volfreConfig & 0x3F)) volfreCount = 0;
-      }
-
-      // Apply frequency slides -> WORKING HURRAY :)
-      if ( volfreSlide != 0) {
-        if (volfreCount == 0) {
-          var f = synth.readFrequency(id);
-          f += volfreSlide;
-          if ((volfreConfig & 0x80) != 0) {
-            if (f < 0) f = 0;
-            else if (f > 9397) f = 9397;
-          }
-          synth.setFrequency(id, f);
-        }
-        if (volfreCount++ >= (volfreConfig & 0x3F)) volfreCount = 0;
-      }
-*/
-
       // Apply Arpeggio or Note Cut -> WORKING HURRAY :)
       if ((arpNotes != 0)  && (note != 0)) {
         if ((arpCount & 0x1F) < (arpTiming & 0x1F)) arpCount++;
@@ -253,7 +213,6 @@ function SquawkStream(sampleRate) {
               case 0: // Set volume
                 synth.setVolume(id, readByte());
                 break;
-
               case 1: // Slide volume ON
                 volfreSlide = readByte();
                 volfreSlide = volfreSlide > 127 ? volfreSlide - 256 : volfreSlide;
@@ -267,7 +226,6 @@ function SquawkStream(sampleRate) {
               case 3: // Slide volume OFF (same as 0x01 0x00)
                 volfreSlide = 0;
                 break;
-
               case 4: // Slide frequency ON
                 volfreSlide = readByte();
                 volfreSlide = volfreSlide > 127 ? volfreSlide - 256 : volfreSlide;
@@ -281,7 +239,6 @@ function SquawkStream(sampleRate) {
               case 6: // Slide frequency OFF
                 volfreSlide = 0;
                 break;
-
               case 7: // Set Arpeggio
                 arpNotes = readByte();    // 0x40 + 0x03
                 arpTiming = readByte();   // 0x80 + 0x40 + 0x20 + amount
