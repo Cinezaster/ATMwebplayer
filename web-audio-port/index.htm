@@ -147,18 +147,21 @@
             reader.onload = function(event) {
                 var music = event.target.result;
                 // Remove all unwanted text, retain comma seperated text
-                music = music.replace(/\/\/"Track/g, '"Track');
+                music = music.replace(/\/\/"[tT]rack/g, 'Track');
                 music = music.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$|([^:]|^)\#.*$|([^:]|^)Song.*$|([^:]|^)}.*$/gm, '');
-                music = music.replace(/"(?![a-zA-Z])/gm, '",');
+                music = music.replace(/"(?![a-zA-Z])/gm, ',');
                 music = music.replace(/[\s]/g, '');
                 music = music.replace(/Track/g, 'Track ');
                 // Create array from music var minus trailing comma
                 music = music.slice(0, -1).split(',');
                 for(var i = 0; i < music.length; i++){
-                    if(music[i][0] !== '"'){ // skip parsing for Track strings
+                    if(music[i][0] !== 'T'){ // skip parsing for Track strings
                         // parse to int and calculate if necessary
                         if(music[i].indexOf('+') !== -1){
-                            music[i] = parseInt(music[i].split('+')[0])+parseInt(music[i].split('+')[1]);
+                            for(var j = 0, calc = 0, split = music[i].split('+'); j < split.length; j++){
+                                calc += parseInt(split[j]);
+                            }
+                            music[i] = calc;
                         }
                         else{
                             music[i] = parseInt(music[i]);
