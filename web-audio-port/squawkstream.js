@@ -60,6 +60,12 @@ function SquawkStream(sampleRate) {
     //var vol          = 0;
     //boolean mute     = 0;
 
+/*
+    // Volume & Frequency slide FX
+    var volfreSlide;
+    var volfreConfig;
+    var volfreCount;
+*/
     // Volume fx
     var volSlide     = 0;
     var volConfig    = 0;
@@ -69,6 +75,7 @@ function SquawkStream(sampleRate) {
     var freqSlide   = 0;
     var freqConfig  = 0;
     var freqCount   = 0;
+
 
     // Arpeggio FX
     var arpNotes    = 0;     // notes: base, base+[7:4], base+[7:4]+[3:0]
@@ -181,8 +188,7 @@ function SquawkStream(sampleRate) {
           else if (((arpCount & 0xE0) == 32) && ((arpTiming & 0x40) == 0) && (arpNotes != 0xFF)) arpCount = 64;
           else arpCount = 0;
           var arpNote = note;
-          if ((arpCount & 0xE0) != 0)
-            {
+          if ((arpCount & 0xE0) != 0) {
               if (arpNotes == 0xFF) arpNote = 0;
               else arpNote += (arpNotes >> 4);
             }
@@ -193,30 +199,18 @@ function SquawkStream(sampleRate) {
 
       // Apply Tremolo or Vibrato -> WORKING HURRAY :)
       if (treviDepth != 0) {
-        //Tremolo (0) or Vibrato (1) ?
-        if ((treviConfig & 0x40) == 0) {
-          var v = synth.readVolume(id);
-          if ((treviCount & 0x80) != 0) v += (treviDepth & 0x1F);
-          else v -= (treviDepth & 0x1F);
-          if (v < 0) v = 0;
-          else if (v > 63) v = 63;
-          synth.setVolume(id, v);
-        }
-        else {
-          var f = synth.readFrequency(id);
-          if ((treviCount & 0x80) != 0) f += treviDepth & 0x1F;
-          else f -= treviDepth & 0x1F;
-          if (f < 0) f = 0;
-          else if (f > 9397) f = 9397;
-          synth.setFrequency(id, f);
-        }
+        var vt = ((treviConfig & 0x40)!=0) ? synth.readFrequency(id) : synth.readVolume(id);
+        vt = ((treviCount & 0x80)!=0) ? (vt + (treviDepth & 0x1F)) : (vt - (treviDepth & 0x1F));
+        if (vt < 0) vt = 0;
+        else if ((treviConfig & 0x40)!=0) if (vt > 9397) vt = 9397;
+        else if ((treviConfig & 0x40)==0) if (vt > 63) vt = 63;
+        ((treviConfig & 0x40)!=0) ? synth.setFrequency(id, vt) : synth.setVolume(id, vt);
         if ((treviCount & 0x1F) < (treviConfig & 0x1F)) treviCount++;
         else {
-          if ((treviCount & 0x80) != 0) treviCount = 0;
-          else treviCount = 128;
+          if ((treviCount & 0x80)!=0) treviCount = 0;
+          else treviCount = 0x80;
         }
       }
-
 
 
       if(delay != 0) delay--;
@@ -236,6 +230,7 @@ function SquawkStream(sampleRate) {
               case 0: // Set volume
                 synth.setVolume(id, readByte());
                 break;
+
               case 1: // Slide volume ON
                 volSlide = readByte();
                 volSlide = volSlide > 127 ? volSlide - 256 : volSlide;
@@ -248,6 +243,7 @@ function SquawkStream(sampleRate) {
               case 3: // Slide volume OFF (same as 0x01 0x00)
                 volSlide = 0;
                 break;
+
               case 4: // Slide frequency ON
                 freqSlide = readByte();
                 freqSlide = freqSlide > 127 ? freqSlide - 256 : freqSlide;
@@ -260,6 +256,7 @@ function SquawkStream(sampleRate) {
               case 6: // Slide frequency OFF
                 freqSlide = 0;
                 break;
+
               case 7: // Set Arpeggio
                 arpNotes = readByte();    // 0x40 + 0x03
                 arpTiming = readByte();   // 0x80 + 0x40 + 0x20 + amount
@@ -283,23 +280,20 @@ function SquawkStream(sampleRate) {
               case 13: // Transposition OFF
                 transConfig = 0;
                 break;
-
               case 14: // SET Tremolo
                 treviDepth = readByte();
                 treviConfig = readByte();
                 break;
-              case 15: // Tremolo   OFF
+              case 15: // Tremolo OFF
                 treviDepth = 0;
                 break;
-
               case 16: // SET Vibrato
                 treviDepth = readByte();
                 treviConfig = readByte() + 0x40;
                 break;
-              case 17: // Vibrato  OFF
+              case 17: // Vibrato OFF
                 treviDepth = 0;
                 break;
-
               case 18: // Glissando
                 glisConfig = readByte();
                 break;
