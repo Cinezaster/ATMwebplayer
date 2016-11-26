@@ -205,7 +205,6 @@ function SquawkStream(sampleRate) {
             if ((note = cmd) != 0) note += transConfig;
             synth.setFrequency(id, noteTable[note]);
             if ((arpTiming & 0x20) != 0) arpCount = 0; // ARP retriggering
-            delay = 1;
           } else if(cmd < 160) {
             // 64 … 159 : SETUP FX
             var fx = cmd - 64;
