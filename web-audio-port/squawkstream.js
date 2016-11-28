@@ -5,8 +5,8 @@
  *   getTickCount()
  */
 
-var ChannelActiveMute = 0xF0;
-//var ChannelActiveMute = 0b11110000;
+var channelActiveMute = 0xF0;
+//var channelActiveMute = 0b11110000;
 //                        ||||||||
 //                        |||||||└->  0  channel 0 is muted (0 = false / 1 = true)
 //                        ||||||└-->  1  channel 1 is muted (0 = false / 1 = true)
@@ -127,8 +127,6 @@ function SquawkStream(sampleRate) {
 
     // All hail "THE PLAYROUTINE"
     function _play() {
-
-      if((ChannelActiveMute & 0xF0) == 0) return;
 
       // run effects here
       if(noise.checked) synth.setFrequency(3, 1);
@@ -313,8 +311,8 @@ function SquawkStream(sampleRate) {
                 //channel[3].track = pgm_read_byte(ch->ptr++);
                 break;
               case 95: // Stop channel
-                //ChannelActiveMute = ChannelActiveMute ^ (1<<(n+4));
-                ChannelActiveMute = 0;
+                //channelActiveMute = channelActiveMute ^ (1<<(n+4));
+                channelActiveMute = 0;
                 break;
               default :
                 break;
@@ -395,6 +393,11 @@ function SquawkStream(sampleRate) {
     return tickCount;
   }
 
+  // Retrieve Active and Muted channels
+  function _getChannelActiveMute() {
+    return (channelActiveMute & 0xF0);
+  }
+
   // Called by synthesizer each tick
   function _tick() {
     // Count ticks for no technical reason whatsoever
@@ -449,6 +452,7 @@ function SquawkStream(sampleRate) {
   // References
   this.setup = _setup;
   this.getTickCount = _getTickCount;
+  this.getChannelActiveMute = _getChannelActiveMute
   this.tick = _tick;
   this.setSource = _setSource;
 }

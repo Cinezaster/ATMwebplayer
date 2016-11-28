@@ -96,7 +96,7 @@
         output.connect(converter);
         // Begin playback (?)
         // output.play(!pause.checked);
-        output.play();
+        if (player.getChannelActiveMute()) output.play();
         // Refresh stats every 10mS or so
         setInterval(refreshStats, 10);
       }
