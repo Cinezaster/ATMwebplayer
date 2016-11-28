@@ -56,7 +56,7 @@ function SquawkSynth() {
       return this.vol / (this.freq & 1 ? +256.0 : -256.0);
     }, 1)
   );
-  var samplesPerTick = 160;
+  var samplesPerTick = 160; //160
   var tickCount = 1;
   var source;
 

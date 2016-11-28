@@ -5,6 +5,19 @@
  *   getTickCount()
  */
 
+var ChannelActiveMute = 0xF0;
+//var ChannelActiveMute = 0b11110000;
+//                        ||||||||
+//                        |||||||└->  0  channel 0 is muted (0 = false / 1 = true)
+//                        ||||||└-->  1  channel 1 is muted (0 = false / 1 = true)
+//                        |||||└--->  2  channel 2 is muted (0 = false / 1 = true)
+//                        ||||└---->  3  channel 3 is muted (0 = false / 1 = true)
+//                        |||└----->  4  channel 0 is Active (0 = false / 1 = true)
+//                        ||└------>  5  channel 1 is Active (0 = false / 1 = true)
+//                        |└------->  6  channel 2 is Active (0 = false / 1 = true)
+//                        └-------->  7  channel 3 is Active (0 = false / 1 = true)
+
+
 // Note frequencies (scales with sample rate for now)
 var noteTable = [
      0,
@@ -41,7 +54,7 @@ function SquawkStream(sampleRate) {
 
   // Channel class - contains the core mysic data processing code
   function Channel(id) {
-    var ptr          = 0;     // Pointer (into stream)
+    var ptr         = 0;     // Pointer (into stream)
     var note        = 0;
 
     // Nesting
@@ -115,7 +128,7 @@ function SquawkStream(sampleRate) {
     // All hail "THE PLAYROUTINE"
     function _play() {
 
-      // TODO: run effects here
+      // run effects here
       if(noise.checked) synth.setFrequency(3, 1);
 
       // Noise retriggering
@@ -287,6 +300,8 @@ function SquawkStream(sampleRate) {
                 break;
               case 21: // Note Cut OFF
                 arpNotes = 0;
+                break;
+              default :
                 break;
             }
           } else if(cmd < 224) {
