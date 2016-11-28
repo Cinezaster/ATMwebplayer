@@ -95,13 +95,15 @@
         converter.connect(synth);
         output.connect(converter);
         // Begin playback (?)
-        output.play(!pause.checked);
+        // output.play(!pause.checked);
+        output.play();
         // Refresh stats every 10mS or so
         setInterval(refreshStats, 10);
       }
 
       function refreshStats() {
         count.innerHTML = player.getTickCount().toString();
+
       }
 
     </script>

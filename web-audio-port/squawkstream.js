@@ -128,6 +128,8 @@ function SquawkStream(sampleRate) {
     // All hail "THE PLAYROUTINE"
     function _play() {
 
+      if((ChannelActiveMute & 0xF0) == 0) return;
+
       // run effects here
       if(noise.checked) synth.setFrequency(3, 1);
 
@@ -301,6 +303,19 @@ function SquawkStream(sampleRate) {
               case 21: // Note Cut OFF
                 arpNotes = 0;
                 break;
+              case 93: // SET tempo
+                //cia = 15625 / pgm_read_byte(ch->ptr++);
+                break;
+              case 94: // Goto advanced
+                //channel[0].track = pgm_read_byte(ch->ptr++);
+                //channel[1].track = pgm_read_byte(ch->ptr++);
+                //channel[2].track = pgm_read_byte(ch->ptr++);
+                //channel[3].track = pgm_read_byte(ch->ptr++);
+                break;
+              case 95: // Stop channel
+                //ChannelActiveMute = ChannelActiveMute ^ (1<<(n+4));
+                ChannelActiveMute = 0;
+                break;
               default :
                 break;
             }
@@ -372,7 +387,7 @@ function SquawkStream(sampleRate) {
   // Provides reference to synthesizer
   function _setup(squawkSynth) {
     synth = squawkSynth;
-    synth.setTick(sampleRate / 40); // Default to 40 ticks per second 
+    synth.setTick(sampleRate / 50); // Default to 40 ticks per second 
   };
 
   // Retrieve tick counter
