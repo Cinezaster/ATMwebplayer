@@ -95,15 +95,15 @@
         converter.connect(synth);
         output.connect(converter);
         // Begin playback (?)
-        // output.play(!pause.checked);
-        if (player.getChannelActiveMute()) output.play();
+        output.play(!pause.checked);
+        if ((player.getChannelActiveMute() == 0) output.pause);
         // Refresh stats every 10mS or so
         setInterval(refreshStats, 10);
       }
 
       function refreshStats() {
         count.innerHTML = player.getTickCount().toString();
-
+        active.innerHTML = player.getChannelActiveMute().toString();
       }
 
     </script>
@@ -113,6 +113,7 @@
     <h3>- DEVELOPMENT ZONE FOR SQUAWK 2.0: ATMlib -</h3>
     <!-- <img src="https://media.giphy.com/media/112iRUPbOe9DEs/giphy.gif" align="absmiddle"><br><br> -->
     <span>Ticks: </span><span id="count">0</span><br><br>
+    <span>Active: </span><span id="active">0</span><br><br>
     <input type="checkbox" id="mute" onchange="output.setVolume(this.checked ? 0.0 : masterVolume);"> <b>MUTE</b> FOR THE LOVE OF ALL THINGS SACRED!</input><br>
     <input type="checkbox" id="noise"> <b>RETRIG</b> NOISE TEST (WHAT IF U HAD ROBOT EARS?)</input><br>
     <input type="checkbox" id="pause" onchange="output.pause(this.checked);"> <b>PAUSE</b> MAKES THE GEARS STOP TURNING...</input><br>

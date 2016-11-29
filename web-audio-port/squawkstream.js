@@ -5,7 +5,7 @@
  *   getTickCount()
  */
 
-var channelActiveMute = 0xF0;
+//var channelActiveMute = 0xF0;
 //var channelActiveMute = 0b11110000;
 //                        ||||||||
 //                        |||||||└->  0  channel 0 is muted (0 = false / 1 = true)
@@ -30,6 +30,7 @@ var noteTable = [
 ];
 
 function SquawkStream(sampleRate) {
+  var channelActiveMute = 0xF0;
   var synth;
   var data;
   var tickCount = 0;
