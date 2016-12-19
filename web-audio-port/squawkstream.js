@@ -303,7 +303,7 @@ function SquawkStream(sampleRate) {
                 arpNotes = 0;
                 break;
               case 93: // SET tempo
-                //cia = 15625 / pgm_read_byte(ch->ptr++);
+                //cia = 16000 / readByte();
                 break;
               case 94: // Goto advanced
                 //channel[0].track = pgm_read_byte(ch->ptr++);
