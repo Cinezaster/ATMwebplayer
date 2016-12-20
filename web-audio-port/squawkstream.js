@@ -271,6 +271,7 @@ function SquawkStream(sampleRate) {
                 break;
               case 12: // SET Transposition
                 transConfig = readByte();
+                transConfig = transConfig > 127 ? transConfig - 256 : transConfig;
                 break;
               case 13: // Transposition OFF
                 transConfig = 0;
