@@ -96,14 +96,14 @@
         output.connect(converter);
         // Begin playback (?)
         output.play(!pause.checked);
-        //if ((player.getChannelActiveMute() == 0) output.pause);
+        setInterval(function(){if(player.getChannelActiveMute() == 0){output.pause(true);}}, 10);
         // Refresh stats every 10mS or so
         setInterval(refreshStats, 10);
       }
 
       function refreshStats() {
         count.innerHTML = player.getTickCount().toString();
-        //active.innerHTML = player.getChannelActiveMute().toString();
+        active.innerHTML = player.getChannelActiveMute().toString();
       }
 
     </script>

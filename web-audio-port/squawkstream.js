@@ -312,8 +312,9 @@ function SquawkStream(sampleRate) {
                 //channel[3].track = pgm_read_byte(ch->ptr++);
                 break;
               case 95: // Stop channel
-                //channelActiveMute = channelActiveMute ^ (1<<(n+4));
-                channelActiveMute = 0;
+                var mask = 0xF0;
+                mask = mask ^ (1<<(id+4))
+                channelActiveMute = channelActiveMute & mask;
                 break;
               default :
                 break;
