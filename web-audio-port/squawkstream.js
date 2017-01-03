@@ -316,6 +316,7 @@ function SquawkStream(sampleRate) {
                 var mask = 0xF0;
                 mask = mask ^ (1<<(id+4))
                 channelActiveMute = channelActiveMute & mask;
+                delay = Infinity;
                 break;
               default :
                 break;
