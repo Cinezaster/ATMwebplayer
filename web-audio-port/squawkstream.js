@@ -218,6 +218,7 @@ function SquawkStream(sampleRate) {
             // 0 … 63 : NOTE ON/OFF
             if ((note = cmd) != 0) note += transConfig;
             synth.setFrequency(id, noteTable[note]);
+            synth.setVolume(id, reCount);
             if ((arpTiming & 0x20) != 0) arpCount = 0; // ARP retriggering
           } else if(cmd < 160) {
             // 64 … 159 : SETUP FX
@@ -225,6 +226,7 @@ function SquawkStream(sampleRate) {
             switch(fx) {
               case 0: // Set volume
                 synth.setVolume(id, readByte());
+                reCount = synth.readVolume(id);
                 break;
               case 1: // Slide volume ON
                 volfreSlide = readByte();
